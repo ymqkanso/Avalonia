@@ -6,16 +6,16 @@ using Avalonia.Data.Converters;
 
 namespace Avalonia.Diagnostics.ViewModels
 {
-    internal class PropertyDetailsViewModel : ViewModelBase
+    internal class AvaloniaPropertyViewModel : PropertyViewModel
     {
-        private AvaloniaObject _target;
+        private readonly AvaloniaObject _target;
         private object _value;
         private string _priority;
         private TypeConverter _converter;
         private string _group;
         private DataGridCollectionView _bindingsView;
 
-        public PropertyDetailsViewModel(AvaloniaObject o, AvaloniaProperty property)
+        public AvaloniaPropertyViewModel(AvaloniaObject o, AvaloniaProperty property)
         {
             _target = o;
             Property = property;
@@ -26,7 +26,7 @@ namespace Avalonia.Diagnostics.ViewModels
 
             if (property.IsDirect)
             {
-                Group = "Properties";
+                _group = "Properties";
                 Priority = "Direct";
             }
 
@@ -34,9 +34,8 @@ namespace Avalonia.Diagnostics.ViewModels
         }
 
         public AvaloniaProperty Property { get; }
-
-        public string Name { get; }
-
+        public override object Key => Property;
+        public override string Name { get; }
         public bool IsAttached => Property.IsAttached;
 
         public string Priority
@@ -45,7 +44,7 @@ namespace Avalonia.Diagnostics.ViewModels
             private set => RaiseAndSetIfChanged(ref _priority, value);
         }
 
-        public string Value
+        public override string Value
         {
             get
             {
@@ -71,10 +70,9 @@ namespace Avalonia.Diagnostics.ViewModels
             }
         }
 
-        public string Group
+        public override string Group
         {
             get => _group;
-            private set => RaiseAndSetIfChanged(ref _group, value);
         }
 
         public DataGridCollectionView BindingsView
@@ -96,7 +94,7 @@ namespace Avalonia.Diagnostics.ViewModels
             }
         }
         
-        public void Update()
+        public override void Update()
         {
             if (Property.IsDirect)
             {
@@ -110,7 +108,7 @@ namespace Avalonia.Diagnostics.ViewModels
 
                 if (val != null)
                 {
-                    Group = IsAttached ? "Attached Properties" : "Properties";
+                    SetGroup(IsAttached ? "Attached Properties" : "Properties");
                     Priority = val.ValuePriority.ToString();
 
                     var bindings = val.Levels.SelectMany(x => x.Bindings, (level, binding) => (level, binding))
@@ -124,10 +122,15 @@ namespace Avalonia.Diagnostics.ViewModels
                 }
                 else
                 {
-                    Group = Priority = "Unset";
+                    SetGroup(Priority = "Unset");
                     BindingsView = null;
                 }
             }
+        }
+
+        private void SetGroup(string group)
+        {
+            RaiseAndSetIfChanged(ref _group, group, nameof(Group));
         }
     }
 }
