@@ -41,9 +41,9 @@ namespace Avalonia.Diagnostics.Views
 
         IStyleHost IStyleHost.StylingParent => null;
 
-        protected override void HandleClosed()
+        protected override void OnClosed(EventArgs e)
         {
-            base.HandleClosed();
+            base.OnClosed(e);
             _keySubscription.Dispose();
             ((MainViewModel)DataContext)?.Dispose();
         }
