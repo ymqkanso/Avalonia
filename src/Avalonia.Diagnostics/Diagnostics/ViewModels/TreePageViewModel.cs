@@ -8,6 +8,7 @@ namespace Avalonia.Diagnostics.ViewModels
     {
         private TreeNode _selected;
         private ControlDetailsViewModel _details;
+        private string _propertyFilter;
 
         public TreePageViewModel(TreeNode[] nodes)
         {
@@ -21,9 +22,16 @@ namespace Avalonia.Diagnostics.ViewModels
             get => _selected;
             set
             {
+                if (Details != null)
+                {
+                    _propertyFilter = Details.PropertyFilter;
+                }
+
                 if (RaiseAndSetIfChanged(ref _selected, value))
                 {
-                    Details = value != null ? new ControlDetailsViewModel(value.Visual) : null;
+                    Details = value != null ?
+                        new ControlDetailsViewModel(value.Visual, _propertyFilter) :
+                        null;
                 }
             }
         }

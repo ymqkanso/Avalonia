@@ -14,7 +14,7 @@ namespace Avalonia.Diagnostics.ViewModels
         private AvaloniaPropertyViewModel _selectedProperty;
         private string _propertyFilter;
 
-        public ControlDetailsViewModel(IVisual control)
+        public ControlDetailsViewModel(IVisual control, string propertyFilter)
         {
             _control = control;
 
@@ -25,6 +25,7 @@ namespace Avalonia.Diagnostics.ViewModels
                 .ToList();
 
             _propertyIndex = properties.GroupBy(x => x.Key).ToDictionary(x => x.Key, x => x.ToList());
+            _propertyFilter = propertyFilter;
 
             var view = new DataGridCollectionView(properties);
             view.GroupDescriptions.Add(new DataGridPathGroupDescription(nameof(AvaloniaPropertyViewModel.Group)));
