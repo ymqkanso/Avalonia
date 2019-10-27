@@ -107,6 +107,7 @@ _NCrunch_*/
 nCrunchTemp_*
 
 # Others
+log/
 sql/
 *.Cache
 ClientBin/
